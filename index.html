@@ -77,9 +77,9 @@
             csvContent += "Title,Link,Snippet\n";
 
             searchResults.forEach(result => {
-                const title = result.title.replace(/"/g, '""'); // Escape double quotes
+                const title = result.title.replace(/"/g, '""');
                 const link = result.link;
-                const snippet = result.snippet.replace(/"/g, '""'); // Escape double quotes
+                const snippet = result.snippet.replace(/"/g, '""');
                 csvContent += `"${title}","${link}","${snippet}"\n`;
             });
 
