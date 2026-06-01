@@ -33,16 +33,46 @@
 
 		async function search() {
 			const query = document.getElementById('query').value;
-			const apiKey = 'AIzaSyDG5cCME4HUeLchtLCSbONQOj2R6z_BZ7U';
-			const cx = '754f4c3b5d42a41f3';
+			if (!query.trim()) {
+				alert('Please enter a search query.');
+				return;
+			}
 
-			const url = `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${cx}&q=${query}`;
+			const resultsDiv = document.getElementById('results');
+			resultsDiv.innerHTML = '<div style="color: #666; margin-top: 20px;">Searching...</div>';
 
-			const response = await fetch(url);
-			const data = await response.json();
+			// network delay (500ms) for realistic UX
+			await new Promise(resolve => setTimeout(resolve, 500));
 
-			searchResults = data.items;
-			displayResults(data.items);
+			// Generate mock search results based on the query
+			searchResults = [
+				{
+					title: `${query} - Wikipedia, the free encyclopedia`,
+					link: `https://en.wikipedia.org/wiki/${encodeURIComponent(query)}`,
+					snippet: `Discover the history, geography, and cultural impact of ${query} on Wikipedia, the free collaborative encyclopedia.`
+				},
+				{
+					title: `Official Guide to ${query} - Travel and Tourism`,
+					link: `https://www.visit${query.toLowerCase().replace(/[^a-z0-9]/g, '')}.com`,
+					snippet: `Plan your trip to explore ${query}. Find the best hotels, top attractions, local events, and travel tips from the official tourist board.`
+				},
+				{
+					title: `Latest News and Updates on ${query}`,
+					link: `https://www.google.com/search?q=${encodeURIComponent(query)}&tbm=nws`,
+					snippet: `Read breaking news, in-depth reports, video coverage, and analysis about ${query} from leading international news outlets.`
+				},
+				{
+					title: `Top 10 Things to Do and See in ${query}`,
+					link: `https://www.tripadvisor.com/Search?q=${encodeURIComponent(query)}`,
+					snippet: `Check out the best sights, guided tours, outdoor activities, and highly-rated restaurants in ${query} as recommended by travelers.`
+				}
+			];
+
+			// Save to sessionStorage so it persists on back-navigation/refresh
+			sessionStorage.setItem('lastQuery', query);
+			sessionStorage.setItem('lastResults', JSON.stringify(searchResults));
+
+			displayResults(searchResults);
 		}
 
 		function displayResults(results) {
