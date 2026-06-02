@@ -4,8 +4,7 @@ import './commands';
 // Prevent known, harmless uncaught exceptions from failing tests.
 // Return false to suppress the error; return true (or nothing) to fail the test.
 Cypress.on('uncaught:exception', (err) => {
-  // The CSV download flow removes an anchor from the body — if our stub
-  // interferes, this error can surface. It does not affect test validity.
+  // index.html's 213 line.
   if (err.message.includes('removeChild')) {
     return false;
   }
@@ -13,22 +12,18 @@ Cypress.on('uncaught:exception', (err) => {
   if (err.message.includes('ResizeObserver loop limit exceeded')) {
     return false;
   }
-  // All other exceptions still fail the test as normal.
-  return true;
+  return true; //fail the test
 });
 
 // ─── Global beforeEach ────────────────────────────────────────────────────────
-// Runs automatically before every test across all spec files.
-// Keeps each test fully isolated — no leftover state from previous tests.
+// Runs automatically before every test
+// For test isolation
 beforeEach(() => {
   cy.clearLocalStorage();
   cy.clearAllSessionStorage();
 });
 
 // ─── Automatic Screenshot on Failure ─────────────────────────────────────────
-// Captures a screenshot whenever a test fails.
-// Files are saved to cypress/screenshots/ and named after the failing test.
-// Note: must use function() not () => to access this.currentTest
 afterEach(function () {
   if (this.currentTest.state === 'failed') {
     cy.screenshot(`FAILED - ${this.currentTest.title}`);

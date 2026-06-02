@@ -1,6 +1,4 @@
 // ─── Page Object Model: Search Page ──────────────────────────────────────────
-//
-// Centralises all selectors and actions for the search page.
 // If a selector changes (e.g. #query → #search-input), fix it here only.
 
 class SearchPage {
@@ -20,40 +18,32 @@ class SearchPage {
   suggestionDeleteBtns() { return cy.get('.suggestion-delete'); }
 
   // ── Actions ─────────────────────────────────────────────────────────────────
-
-  /** Clear the input, type a query, and click the search icon. */
+  // Performs a search by typing in the input and clicking the search icon.
   search(query) {
     this.searchInput().clear().type(query);
     this.searchIcon().click();
   }
-
-  /** Type a query and submit with the Enter key. */
+  //by Enter
   searchByEnter(query) {
     this.searchInput().type(`${query}{enter}`);
   }
 
-  /** Wait for exactly `count` result items to appear. */
-  waitForResults(count = 4) {
-    return this.results().should('have.length', count);
-  }
-
-  /** Click the Download Results button. */
   download() {
     this.downloadButton().click();
   }
 
-  /** Focus the search input and wait for the suggestions dropdown to appear. */
+  // Dropdown
   openDropdown() {
     this.searchInput().focus();
     this.suggestions().should('be.visible');
   }
 
-  /** Delete the first suggestion and assert the dropdown stays open. */
+  // Deleting first suggestion in dropdown and dropdown should stay visible
   deleteFirstSuggestion() {
     this.suggestionDeleteBtns().first().trigger('mousedown');
     this.suggestions().should('be.visible');
   }
 }
 
-// Export a single shared instance — no need to instantiate in every test
+// Export a single shared instance
 export default new SearchPage();
