@@ -224,10 +224,10 @@ describe('Search Page', () => {
     SearchPage.openDropdown();
     SearchPage.suggestionItems().should('have.length', 3);
 
-    SearchPage.deleteFirstSuggestion(); // removes Cairo
+    SearchPage.deleteFirstSuggestion();
     SearchPage.suggestionItems().should('have.length', 2);
 
-    SearchPage.deleteFirstSuggestion(); // removes Berlin
+    SearchPage.deleteFirstSuggestion();
     SearchPage.suggestionItems().should('have.length', 1).first().should('contain.text', 'Athens');
   });
 

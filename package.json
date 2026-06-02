@@ -3,10 +3,15 @@
   "version": "1.0.0",
   "description": "Search page with Cypress E2E tests",
   "scripts": {
+    "start": "http-server . -p 8080 -c-1 --silent",
+    "test": "start-server-and-test start http://localhost:8080 cypress:run",
+    "test:open": "start-server-and-test start http://localhost:8080 cypress:open",
     "cypress:open": "cypress open",
     "cypress:run": "cypress run"
   },
   "devDependencies": {
-    "cypress": "^13.0.0"
+    "cypress": "^13.0.0",
+    "http-server": "^14.1.1",
+    "start-server-and-test": "^2.0.0"
   }
 }
