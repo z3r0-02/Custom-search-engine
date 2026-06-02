@@ -24,7 +24,7 @@ You do **not** need to start a server yourself.
 
 | Command             | What it does                                                        |
 | ------------------- | ------------------------------------------------------------------- |
-| `npm test`          | Start server + run the whole suite headlessly (CI-friendly).        |
+| `npm test`          | Start server + run the whole suite headlessly.        |
 | `npm run test:open` | Start server + open the interactive Cypress runner.                 |
 | `npm start`         | Just serve the page at `http://localhost:8080` (no tests).          |
 
@@ -36,13 +36,11 @@ styles.css               # styling
 cypress.config.js         # Cypress config (baseUrl: http://localhost:8080)
 cypress/
   e2e/search.cy.js        # the test specs
-  pages/SearchPage.js     # Page Object Model (selectors + actions)
+  pages/SearchPage.js     # Page Object Model
   support/                # custom commands + global hooks
 ```
 
 ## Notes
 
 - `node_modules/` is intentionally **not** committed — run `npm install` to
-  regenerate it. `package-lock.json` is committed so everyone gets identical versions.
-- The tests require the page to be served over HTTP (Cypress `baseUrl`); opening
-  `index.html` directly via `file://` will not work. Use the `npm` scripts above.
+  regenerate it.
