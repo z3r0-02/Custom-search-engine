@@ -48,3 +48,62 @@ h1 {
 .search-icon:hover {
 	transform: scale(0.9);
 }
+
+#suggestions {
+	display: none;
+	position: absolute;
+	top: calc(100% - 12px);
+	left: 5%;
+	width: 90%;
+	box-sizing: border-box;
+	background: #fff;
+	border: 1.5px solid rgb(178, 180, 189);
+	border-top: none;
+	border-radius: 0 0 18px 18px;
+	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+	z-index: 100;
+	overflow: hidden;
+}
+
+#query.suggestions-open {
+	border-radius: 25px 25px 0 0;
+}
+
+.suggestion-item {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 10px 18px;
+	font-size: 15px;
+	color: #333;
+	cursor: pointer;
+	text-align: left;
+	transition: background 0.1s;
+}
+
+.suggestion-item:hover {
+	background-color: #f7f8f8;
+}
+
+.suggestion-icon {
+	font-size: 14px;
+	opacity: 0.5;
+}
+
+.suggestion-text {
+	flex: 1;
+}
+
+.suggestion-delete {
+	font-size: 18px;
+	color: #aaa;
+	padding: 0 4px;
+	border-radius: 50%;
+	line-height: 1;
+	transition: color 0.15s, background 0.15s;
+}
+
+.suggestion-delete:hover {
+	color: #333;
+	background: #e8e8e8;
+}

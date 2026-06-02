@@ -15,6 +15,7 @@
 	<div class="search-container">
 		<input type="text" id="query" placeholder="Search...">
 		<span class="search-icon" onclick="search()">&#128269;</span>
+		<div id="suggestions"></div>
 	</div>
 	<div class="buttons">
 		<button onclick="downloadResults()">Download Results</button>
@@ -25,16 +26,23 @@
 	<script>
 		let searchResults = [];
 
-		document.getElementById('query').addEventListener('keypress', function(event) {
+		const queryInput = document.getElementById('query');
+
+		queryInput.addEventListener('keypress', function(event) {
 			if (event.key === 'Enter') {
 				search();
 			}
 		});
 
+		queryInput.addEventListener('focus', () => showSuggestions(queryInput.value));
+		queryInput.addEventListener('input',  () => showSuggestions(queryInput.value));
+		queryInput.addEventListener('keydown', (e) => { if (e.key === 'Escape') hideSuggestions(); });
+		queryInput.addEventListener('blur', () => setTimeout(hideSuggestions, 150));
+
 		async function search() {
-			const query = document.getElementById('query').value;
+			const query = queryInput.value;
 			if (!query.trim()) {
-				alert('Please enter a search query.');
+				alert('Zadejte prosím svůj dotaz.');
 				return;
 			}
 
@@ -44,7 +52,6 @@
 			// network delay (500ms) for realistic UX
 			await new Promise(resolve => setTimeout(resolve, 500));
 
-			// Generate mock search results based on the query
 			searchResults = [
 				{
 					title: `${query} - Wikipedia, the free encyclopedia`,
@@ -68,9 +75,13 @@
 				}
 			];
 
-			// Save to sessionStorage so it persists on back-navigation/refresh
+			// Save query
 			sessionStorage.setItem('lastQuery', query);
 			sessionStorage.setItem('lastResults', JSON.stringify(searchResults));
+
+			// Save query to history
+			addToHistory(query);
+			hideSuggestions();
 
 			displayResults(searchResults);
 		}
@@ -97,9 +108,89 @@
 			});
 		}
 
+		function addToHistory(query) {
+			const history = getHistory().filter(q => q.toLowerCase() !== query.toLowerCase());
+			history.unshift(query);
+			localStorage.setItem('searchHistory', JSON.stringify(history.slice(0, 10)));
+		}
+
+		function getHistory() {
+			return JSON.parse(localStorage.getItem('searchHistory') || '[]');
+		}
+
+		function showSuggestions(filter) {
+			const matches = getHistory()
+				.filter(q => q.toLowerCase().includes((filter || '').toLowerCase()))
+				.slice(0, 5); // show max 5 suggestions
+			const box = document.getElementById('suggestions');
+
+			if (matches.length === 0) { hideSuggestions(); return; }
+
+			box.innerHTML = '';
+			matches.forEach(q => {
+				const item = document.createElement('div');
+				item.classList.add('suggestion-item');
+
+				const icon = document.createElement('span');
+				icon.className = 'suggestion-icon';
+				icon.textContent = '🕐';
+
+				const text = document.createElement('span');
+				text.className = 'suggestion-text';
+				text.textContent = q;
+
+				const deleteBtn = document.createElement('span');
+				deleteBtn.className = 'suggestion-delete';
+				deleteBtn.textContent = '×';
+				deleteBtn.addEventListener('mousedown', (e) => {
+					e.preventDefault();  // dropdown stays open
+					e.stopPropagation();
+					deleteFromHistory(q);
+					showSuggestions(queryInput.value);
+				});
+
+				item.appendChild(icon);
+				item.appendChild(text);
+				item.appendChild(deleteBtn);
+
+				item.addEventListener('mousedown', () => {
+					queryInput.value = q;
+					hideSuggestions();
+					search();
+				});
+				box.appendChild(item);
+			});
+			box.style.display = 'block';
+			queryInput.classList.add('suggestions-open');
+		}
+
+		function hideSuggestions() {
+			document.getElementById('suggestions').style.display = 'none';
+			queryInput.classList.remove('suggestions-open');
+		}
+
+		function deleteFromHistory(query) {
+			const updated = getHistory().filter(q => q.toLowerCase() !== query.toLowerCase());
+			localStorage.setItem('searchHistory', JSON.stringify(updated));
+		}
+
+		// Restore last search results when navigating back
+		(function restoreFromSession() {
+			const navType = performance.getEntriesByType('navigation')[0]?.type;
+			if (navType !== 'back_forward') return;
+
+			const savedQuery = sessionStorage.getItem('lastQuery');
+			const savedResults = sessionStorage.getItem('lastResults');
+			if (savedQuery && savedResults) {
+				document.getElementById('query').value = savedQuery;
+				searchResults = JSON.parse(savedResults);
+				displayResults(searchResults);
+			}
+		})();
+
 		function downloadResults() {
  			if (searchResults.length === 0) {
-			alert('No results to download.');
+			alert('Nic ke stažení.');
  				return;
 			}
 
