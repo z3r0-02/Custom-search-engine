@@ -3,13 +3,14 @@ name: Cypress E2E Tests
 on: [push, pull_request]
 
 jobs:
-  cypress:
-    runs-on: ubuntu-latest
+  cypress-run:
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v6
 
-      - name: Install dependencies
-        run: npm install
-
-      - name: Run Cypress tests
-        run: npm test
+      - name: Cypress run
+        uses: cypress-io/github-action@v7
+        with:
+          start: npm start
+          wait-on: 'http://localhost:8080'
