@@ -1,0 +1,15 @@
+name: Cypress E2E Tests
+
+on: [push, pull_request]
+
+jobs:
+  cypress:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run Cypress tests
+        run: npm test
